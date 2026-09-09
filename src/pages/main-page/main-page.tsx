@@ -1,10 +1,24 @@
-import OfferCard from '../../components/offer-card/offer-card';
+import {useState} from 'react';
+import OffersList from '../../components/offers-list/offers-list';
+import {Offer} from '../../types/offer';
 
 type MainPageProps = {
-  offersCount: number;
+  offers: Offer[];
 };
 
-function MainPage({offersCount}: MainPageProps): JSX.Element {
+export default function MainPage({offers}: MainPageProps): JSX.Element {
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+
+  const offersCount = offers.length;
+
+  const handleOfferMouseEnter = (offerId: string) => {
+    setActiveOfferId(offerId);
+  };
+
+  const handleOfferMouseLeave = () => {
+    setActiveOfferId(null);
+  };
+
   return (
     <div className="page page--gray page--main">
       <header className="header">
@@ -95,15 +109,19 @@ function MainPage({offersCount}: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                <OfferCard />
-                <OfferCard />
-                <OfferCard />
-                <OfferCard />
-                <OfferCard />
+                <OffersList
+                  offers={offers}
+                  onOfferMouseEnter={handleOfferMouseEnter}
+                  onOfferMouseLeave={handleOfferMouseLeave}
+                />
               </div>
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <section
+                className="cities__map map"
+                data-active-offer-id={activeOfferId ?? undefined}
+              >
+              </section>
             </div>
           </div>
         </div>
@@ -111,5 +129,3 @@ function MainPage({offersCount}: MainPageProps): JSX.Element {
     </div>
   );
 }
-
-export default MainPage;
