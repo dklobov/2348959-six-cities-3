@@ -1,23 +1,15 @@
-import {useState} from 'react';
 import OffersList from '../../components/offers-list/offers-list';
 import {Offer} from '../../types/offer';
+import Map from '../../components/map/map';
 
 type MainPageProps = {
   offers: Offer[];
 };
 
 export default function MainPage({offers}: MainPageProps): JSX.Element {
-  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
-
   const offersCount = offers.length;
 
-  const handleOfferMouseEnter = (offerId: string) => {
-    setActiveOfferId(offerId);
-  };
-
-  const handleOfferMouseLeave = () => {
-    setActiveOfferId(null);
-  };
+  const city = offers[0].city;
 
   return (
     <div className="page page--gray page--main">
@@ -56,7 +48,7 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
           <section className="locations container">
             <ul className="locations__list tabs__list">
               <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active" href="/">
+                <a className="locations__item-link tabs__item" href="/">
                   <span>Paris</span>
                 </a>
               </li>
@@ -71,7 +63,7 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
                 </a>
               </li>
               <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
+                <a className="locations__item-link tabs__item tabs__item--active" href="#">
                   <span>Amsterdam</span>
                 </a>
               </li>
@@ -92,7 +84,7 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in Paris</b>
+              <b className="places__found">{offersCount} places to stay in Amsterdam</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -111,17 +103,14 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
               <div className="cities__places-list places__list tabs__content">
                 <OffersList
                   offers={offers}
-                  onOfferMouseEnter={handleOfferMouseEnter}
-                  onOfferMouseLeave={handleOfferMouseLeave}
                 />
               </div>
             </section>
             <div className="cities__right-section">
-              <section
-                className="cities__map map"
-                data-active-offer-id={activeOfferId ?? undefined}
-              >
-              </section>
+              <Map
+                city={city}
+                offers={offers}
+              />
             </div>
           </div>
         </div>
