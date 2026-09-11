@@ -29,7 +29,16 @@ const CITIES = [
   CityName.Dusseldorf,
 ] as const;
 
+const SortType = {
+  Popular: 'Popular',
+  PriceLowToHigh: 'Price: low to high',
+  PriceHighToLow: 'Price: high to low',
+  TopRatedFirst: 'Top rated first',
+} as const;
+
+type SortTypeName = typeof SortType[keyof typeof SortType];
+
 type CityNameType = typeof CityName[keyof typeof CityName];
 
-export {AppRoute, AuthorizationStatus, CityName, CITIES};
-export type {CityNameType};
+export {AppRoute, AuthorizationStatus, CityName, CITIES, SortType};
+export type {CityNameType, SortTypeName};
