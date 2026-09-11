@@ -1,15 +1,24 @@
+import CitiesList from '../../components/cities-list/cities-list';
 import OffersList from '../../components/offers-list/offers-list';
-import {Offer} from '../../types/offer';
+import {getCity, getFilteredOffers} from '../../store/selectors';
+import {useDispatch, useSelector} from 'react-redux';
+import {changeCity} from '../../store/action';
+import type {CityNameType} from '../../const';
 import Map from '../../components/map/map';
+import {cities} from '../../mocks/cities';
+import {CITIES} from '../../const';
 
-type MainPageProps = {
-  offers: Offer[];
-};
+function MainPage(): JSX.Element {
+  const dispatch = useDispatch();
+  const currentCity = useSelector(getCity);
+  const filteredOffers = useSelector(getFilteredOffers);
 
-export default function MainPage({offers}: MainPageProps): JSX.Element {
-  const offersCount = offers.length;
+  const currentCityData = cities.find((city) => city.name === currentCity) ?? cities[0];
+  const offersCount = filteredOffers.length;
 
-  const city = offers[0].city;
+  const handleCityChange = (city: CityNameType) => {
+    dispatch(changeCity(city));
+  };
 
   return (
     <div className="page page--gray page--main">
@@ -44,47 +53,16 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
-        <div className="tabs">
-          <section className="locations container">
-            <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="/">
-                  <span>Paris</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Cologne</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Brussels</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item tabs__item--active" href="#">
-                  <span>Amsterdam</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Hamburg</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Dusseldorf</span>
-                </a>
-              </li>
-            </ul>
-          </section>
-        </div>
+        <CitiesList
+          cities={CITIES}
+          currentCity={currentCity}
+          onCityChange={handleCityChange}
+        />
         <div className="cities">
           <div className="cities__places-container container">
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">{offersCount} places to stay in Amsterdam</b>
+              <b className="places__found">{offersCount} places to stay in {currentCity}</b>
               <form className="places__sorting" action="#" method="get">
                 <span className="places__sorting-caption">Sort by</span>
                 <span className="places__sorting-type" tabIndex={0}>
@@ -101,15 +79,13 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                <OffersList
-                  offers={offers}
-                />
+                <OffersList offers={filteredOffers} />
               </div>
             </section>
             <div className="cities__right-section">
               <Map
-                city={city}
-                offers={offers}
+                city={currentCityData}
+                offers={filteredOffers}
               />
             </div>
           </div>
@@ -118,3 +94,5 @@ export default function MainPage({offers}: MainPageProps): JSX.Element {
     </div>
   );
 }
+
+export default MainPage;

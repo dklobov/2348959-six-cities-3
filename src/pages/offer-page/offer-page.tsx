@@ -1,15 +1,13 @@
-import {useParams} from 'react-router-dom';
+import ReviewsList from '../../components/reviews-list/reviews-list';
 import OffersList from '../../components/offers-list/offers-list';
 import ReviewForm from '../../components/review-form/review-form';
 import NotFoundPage from '../not-found-page/not-found-page';
-import {Offer} from '../../types/offer';
-import Map from '../../components/map/map';
-import ReviewsList from '../../components/reviews-list/reviews-list';
+import {getOffers} from '../../store/selectors';
 import {reviews} from '../../mocks/reviews';
-
-type OfferPageProps = {
-  offers: Offer[];
-};
+import {useParams} from 'react-router-dom';
+import Map from '../../components/map/map';
+import {Offer} from '../../types/offer';
+import {useSelector} from 'react-redux';
 
 const OFFER_IMAGES_COUNT = 6;
 const NEARBY_OFFERS_COUNT = 3;
@@ -23,8 +21,9 @@ function getFormattedOfferType(type: Offer['type']): string {
   return type[0].toUpperCase() + type.slice(1);
 }
 
-function OfferPage({offers}: OfferPageProps): JSX.Element {
+function OfferPage(): JSX.Element {
   const {id} = useParams();
+  const offers = useSelector(getOffers);
   const currentOffer = offers.find((offer) => offer.id === id);
 
   if (!currentOffer) {
