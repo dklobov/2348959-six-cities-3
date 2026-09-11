@@ -15,12 +15,15 @@ const DEFAULT_MARKER_ICON = leaflet.icon({
   iconAnchor: [13, 39],
 });
 
+const DEFAULT_MAP_CLASS_NAME = 'cities__map map';
+
 type MapProps = {
   city: Offer['city'];
   offers: Offer[];
+  className?: string;
 };
 
-function Map({city, offers}: MapProps): JSX.Element {
+function Map({city, offers, className = DEFAULT_MAP_CLASS_NAME}: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<leaflet.Map | null>(null);
 
@@ -74,7 +77,7 @@ function Map({city, offers}: MapProps): JSX.Element {
   }, [offers]);
 
   return (
-    <section className="cities__map map" ref={mapRef}></section>
+    <section className={className} ref={mapRef}></section>
   );
 }
 
