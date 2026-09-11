@@ -6,37 +6,37 @@ import OfferPage from '../../pages/offer-page/offer-page';
 import PrivateRoute from '../private-route/private-route';
 import MainPage from '../../pages/main-page/main-page';
 import {Route, Routes} from 'react-router-dom';
-import {Offer} from '../../types/offer';
 import {AppRoute} from '../../const';
 
 type AppProps = {
-  offers: Offer[];
   authorizationStatus: AuthorizationStatusType;
 };
 
 
-function App({offers, authorizationStatus}: AppProps): JSX.Element {
+function App({authorizationStatus}: AppProps): JSX.Element {
   return (
     <Routes>
       <Route
         path={AppRoute.Main}
-        element={<MainPage offers={offers} />}
+        element={<MainPage />}
       />
       <Route
         path={AppRoute.Login}
         element={<LoginPage />}
       />
+
       <Route
         path={AppRoute.Favorites}
         element={
           <PrivateRoute authorizationStatus={authorizationStatus}>
-            <FavoritesPage offers={offers} />
+            <FavoritesPage />
           </PrivateRoute>
         }
       />
+
       <Route
         path={AppRoute.Offer}
-        element={<OfferPage offers={offers} />}
+        element={<OfferPage />}
       />
       <Route
         path={AppRoute.NotFound}
