@@ -1,7 +1,9 @@
+import type {CityNameType} from '../const';
+
 type OfferTypeName = 'apartment' | 'room' | 'house' | 'hotel';
 
 type City = {
-  name: string;
+  name: CityNameType;
   location: {
     latitude: number;
     longitude: number;
@@ -40,4 +42,4 @@ type Offer = {
   description: string;
 };
 
-export type {Offer};
+export type {City, Offer};
