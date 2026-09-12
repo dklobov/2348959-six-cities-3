@@ -1,4 +1,3 @@
-import {AuthorizationStatusType} from '../../types/authorization-status';
 import FavoritesPage from '../../pages/favorites-page/favorites-page';
 import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import LoginPage from '../../pages/login-page/login-page';
@@ -8,12 +7,7 @@ import MainPage from '../../pages/main-page/main-page';
 import {Route, Routes} from 'react-router-dom';
 import {AppRoute} from '../../const';
 
-type AppProps = {
-  authorizationStatus: AuthorizationStatusType;
-};
-
-
-function App({authorizationStatus}: AppProps): JSX.Element {
+function App(): JSX.Element {
   return (
     <Routes>
       <Route
@@ -28,7 +22,7 @@ function App({authorizationStatus}: AppProps): JSX.Element {
       <Route
         path={AppRoute.Favorites}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus}>
+          <PrivateRoute>
             <FavoritesPage />
           </PrivateRoute>
         }
