@@ -36,9 +36,14 @@ const SortType = {
   TopRatedFirst: 'Top rated first',
 } as const;
 
+const ServerConfig = {
+  Url: 'https://15.design.htmlacademy.pro/six-cities',
+  Timeout: 5000,
+} as const;
+
 type SortTypeName = typeof SortType[keyof typeof SortType];
 
 type CityNameType = typeof CityName[keyof typeof CityName];
 
-export {AppRoute, AuthorizationStatus, CityName, CITIES, SortType};
+export {AppRoute, AuthorizationStatus, CityName, CITIES, SortType, ServerConfig};
 export type {CityNameType, SortTypeName};
