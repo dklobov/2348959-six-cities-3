@@ -1,18 +1,17 @@
 import {BrowserRouter} from 'react-router-dom';
 import {AuthorizationStatus} from './const';
-import {fillOffers} from './store/action';
 import ReactDOM from 'react-dom/client';
 import App from './components/app/app';
-import {offers} from './mocks/offers';
 import {Provider} from 'react-redux';
 import {store} from './store';
 import React from 'react';
+import { fetchOffersAction } from './store/api-actions';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-store.dispatch(fillOffers(offers));
+store.dispatch(fetchOffersAction());
 
 root.render(
   <React.StrictMode>
