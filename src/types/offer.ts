@@ -42,4 +42,23 @@ type Offer = {
   description: string;
 };
 
-export type {City, Offer};
+type ServerOffer = {
+  id: string;
+  title: string;
+  type: OfferTypeName;
+  price: number;
+  city: City;
+  location: Location;
+  isFavorite: boolean;
+  isPremium: boolean;
+  rating: number;
+  previewImage: string;
+  images: string[];
+  bedrooms: number;
+  maxAdults: number;
+  goods: string[];
+  host: Host;
+  description: string;
+};
+
+export type {City, Offer, ServerOffer};
