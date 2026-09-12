@@ -1,15 +1,16 @@
+import {getCity, getFilteredOffers, getOffersLoadingStatus} from '../../store/selectors';
+import SortingOptions from '../../components/sorting-options/sorting-options';
 import CitiesList from '../../components/cities-list/cities-list';
 import OffersList from '../../components/offers-list/offers-list';
-import {getCity, getFilteredOffers} from '../../store/selectors';
+import type {CityNameType, SortTypeName} from '../../const';
+import Spinner from '../../components/spinner/spinner';
 import {useDispatch, useSelector} from 'react-redux';
+import {getSortedOffers} from '../../utils/offer';
 import {changeCity} from '../../store/action';
+import {CITIES, SortType} from '../../const';
 import Map from '../../components/map/map';
 import {cities} from '../../mocks/cities';
 import {useState} from 'react';
-import SortingOptions from '../../components/sorting-options/sorting-options';
-import {CITIES, SortType} from '../../const';
-import {getSortedOffers} from '../../utils/offer';
-import type {CityNameType, SortTypeName} from '../../const';
 
 function MainPage(): JSX.Element {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ function MainPage(): JSX.Element {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const currentCity = useSelector(getCity);
   const filteredOffers = useSelector(getFilteredOffers);
+  const isOffersLoading = useSelector(getOffersLoadingStatus);
 
   const currentCityData = cities.find((city) => city.name === currentCity) ?? cities[0];
   const offersCount = filteredOffers.length;
@@ -87,19 +89,25 @@ function MainPage(): JSX.Element {
                 onSortTypeChange={handleSortTypeChange}
               />
               <div className="cities__places-list places__list tabs__content">
-                <OffersList
-                  offers={sortedOffers}
-                  onOfferMouseEnter={handleOfferMouseEnter}
-                  onOfferMouseLeave={handleOfferMouseLeave}
-                />
+                {isOffersLoading ? (
+                  <Spinner />
+                ) : (
+                  <OffersList
+                    offers={sortedOffers}
+                    onOfferMouseEnter={handleOfferMouseEnter}
+                    onOfferMouseLeave={handleOfferMouseLeave}
+                  />
+                )}
               </div>
             </section>
             <div className="cities__right-section">
-              <Map
-                city={currentCityData}
-                offers={sortedOffers}
-                selectedOfferId={activeOfferId}
-              />
+              {!isOffersLoading && (
+                <Map
+                  city={currentCityData}
+                  offers={sortedOffers}
+                  selectedOfferId={activeOfferId}
+                />
+              )}
             </div>
           </div>
         </div>

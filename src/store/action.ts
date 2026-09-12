@@ -6,4 +6,6 @@ const changeCity = createAction<CityNameType>('city/changeCity');
 
 const fillOffers = createAction<Offer[]>('offers/fillOffers');
 
-export {changeCity, fillOffers};
+const setOffersLoadingStatus = createAction<boolean>('offers/setOffersLoadingStatus');
+
+export {changeCity, fillOffers, setOffersLoadingStatus};
