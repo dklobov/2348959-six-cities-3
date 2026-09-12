@@ -14,4 +14,8 @@ function getFilteredOffers(state: State): Offer[] {
   return state.offers.filter((offer) => offer.city.name === state.city);
 }
 
-export {getCity, getOffers, getFilteredOffers};
+function getOffersLoadingStatus(state: State): boolean {
+  return state.isOffersLoading;
+}
+
+export {getCity, getOffers, getFilteredOffers, getOffersLoadingStatus};
