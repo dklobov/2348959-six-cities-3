@@ -47,6 +47,7 @@ function OfferPage(): JSX.Element {
   const isOfferLoading = useAppSelector(getOfferLoadingStatus);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+  const [isReviewSending, setIsReviewSending] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -83,12 +84,18 @@ function OfferPage(): JSX.Element {
 
   const offerMapOffers = [currentOffer, ...nearbyOffers];
 
-  const handleReviewSubmit = (reviewData: ReviewData) => {
+  const handleReviewSubmit = async (reviewData: ReviewData) => {
     if (!id) {
       return;
     }
 
-    dispatch(postReviewAction(id, reviewData));
+    setIsReviewSending(true);
+
+    try {
+      await dispatch(postReviewAction(id, reviewData));
+    } finally {
+      setIsReviewSending(false);
+    }
   };
 
   const handleOfferMouseEnter = (offerId: string) => {
@@ -201,7 +208,10 @@ function OfferPage(): JSX.Element {
               <section className="offer__reviews reviews">
                 <ReviewsList reviews={reviews} />
                 {authorizationStatus === AuthorizationStatus.Auth && (
-                  <ReviewForm onReviewSubmit={handleReviewSubmit} />
+                  <ReviewForm
+                    isSending={isReviewSending}
+                    onReviewSubmit={handleReviewSubmit}
+                  />
                 )}
               </section>
             </div>
