@@ -1,17 +1,101 @@
+import {
+  fillOffers,
+  setOffersLoadingStatus,
+  requireAuthorization,
+  fillNearbyOffers,
+  fillReviews,
+  setCurrentOffer,
+  setOfferLoadingStatus} from './action';
+import type {Review, ReviewData} from '../types/review';
 import {AxiosInstance} from 'axios';
 import {AppDispatch, State} from './index';
 import {adaptOfferToClient} from '../utils/adapter';
-import {fillOffers, setOffersLoadingStatus} from './action';
 import type {ServerOffer} from '../types/offer';
 import {AuthorizationStatus} from '../const';
 import {saveToken} from '../services/token';
-import {requireAuthorization} from './action';
 import type {AuthData} from '../types/auth-data';
 import type {UserData} from '../types/user-data';
 
 const OFFERS_ROUTE = '/offers';
 
 const LOGIN_ROUTE = '/login';
+
+function getOfferRoute(offerId: string): string {
+  return `/offers/${offerId}`;
+}
+
+function getNearbyOffersRoute(offerId: string): string {
+  return `/offers/${offerId}/nearby`;
+}
+
+function getReviewsRoute(offerId: string): string {
+  return `/comments/${offerId}`;
+}
+
+function fetchOfferAction(offerId: string) {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    dispatch(setOfferLoadingStatus(true));
+
+    try {
+      const {data} = await api.get<ServerOffer>(getOfferRoute(offerId));
+      dispatch(setCurrentOffer(adaptOfferToClient(data)));
+    } catch {
+      dispatch(setCurrentOffer(null));
+    } finally {
+      dispatch(setOfferLoadingStatus(false));
+    }
+  };
+}
+
+function fetchNearbyOffersAction(offerId: string) {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    try {
+      const {data} = await api.get<ServerOffer[]>(getNearbyOffersRoute(offerId));
+      const nearbyOffers = data.map(adaptOfferToClient);
+
+      dispatch(fillNearbyOffers(nearbyOffers));
+    } catch {
+      dispatch(fillNearbyOffers([]));
+    }
+  };
+}
+function fetchReviewsAction(offerId: string) {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    try {
+      const {data} = await api.get<Review[]>(getReviewsRoute(offerId));
+
+      dispatch(fillReviews(data));
+    } catch {
+      dispatch(fillReviews([]));
+    }
+  };
+}
+
+function postReviewAction(offerId: string, reviewData: ReviewData) {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    await api.post(getReviewsRoute(offerId), reviewData);
+
+    const {data} = await api.get<Review[]>(getReviewsRoute(offerId));
+
+    dispatch(fillReviews(data));
+  };
+}
 
 function fetchOffersAction() {
   return async (
@@ -60,4 +144,12 @@ function loginAction(authData: AuthData) {
   };
 }
 
-export {checkAuthAction, fetchOffersAction, loginAction};
+export {
+  checkAuthAction,
+  fetchNearbyOffersAction,
+  fetchOfferAction,
+  fetchOffersAction,
+  fetchReviewsAction,
+  loginAction,
+  postReviewAction
+};
