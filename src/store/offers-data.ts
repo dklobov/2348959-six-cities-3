@@ -1,5 +1,5 @@
+import {fillOffers, setOffersLoadingStatus, updateOffer} from './action';
 import {createReducer} from '@reduxjs/toolkit';
-import {fillOffers, setOffersLoadingStatus} from './action';
 import type {Offer} from '../types/offer';
 
 type OffersData = {
@@ -19,6 +19,13 @@ const offersData = createReducer(initialState, (builder) => {
     })
     .addCase(setOffersLoadingStatus, (state, action) => {
       state.isOffersLoading = action.payload;
+    })
+    .addCase(updateOffer, (state, action) => {
+      const offerIndex = state.offers.findIndex((offer) => offer.id === action.payload.id);
+
+      if (offerIndex !== -1) {
+        state.offers[offerIndex] = action.payload;
+      }
     });
 });
 

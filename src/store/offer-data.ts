@@ -4,6 +4,7 @@ import {
   fillReviews,
   setCurrentOffer,
   setOfferLoadingStatus,
+  updateOffer,
 } from './action';
 import type {Offer} from '../types/offer';
 import type {Review} from '../types/review';
@@ -35,6 +36,19 @@ const offerData = createReducer(initialState, (builder) => {
     })
     .addCase(fillReviews, (state, action) => {
       state.reviews = action.payload;
+    })
+    .addCase(updateOffer, (state, action) => {
+      const updatedOffer = action.payload;
+
+      if (state.currentOffer?.id === updatedOffer.id) {
+        state.currentOffer = updatedOffer;
+      }
+
+      const nearbyOfferIndex = state.nearbyOffers.findIndex((offer) => offer.id === updatedOffer.id);
+
+      if (nearbyOfferIndex !== -1) {
+        state.nearbyOffers[nearbyOfferIndex] = updatedOffer;
+      }
     });
 });
 

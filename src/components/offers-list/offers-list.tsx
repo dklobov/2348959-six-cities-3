@@ -5,6 +5,7 @@ import type {Offer} from '../../types/offer';
 type OffersListProps = {
   offers: Offer[];
   cardClassName?: string;
+  onFavoriteButtonClick?: (offer: Offer) => void;
   onOfferMouseEnter?: (offerId: string) => void;
   onOfferMouseLeave?: () => void;
 };
@@ -12,6 +13,7 @@ type OffersListProps = {
 function OffersList({
   offers,
   cardClassName,
+  onFavoriteButtonClick,
   onOfferMouseEnter,
   onOfferMouseLeave,
 }: OffersListProps): JSX.Element {
@@ -22,6 +24,7 @@ function OffersList({
           key={offer.id}
           offer={offer}
           className={cardClassName}
+          onFavoriteButtonClick={onFavoriteButtonClick}
           onOfferMouseEnter={onOfferMouseEnter}
           onOfferMouseLeave={onOfferMouseLeave}
         />

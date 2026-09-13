@@ -42,9 +42,16 @@ const ServerConfig = {
   Timeout: 5000,
 } as const;
 
+const FavoriteStatus = {
+  Add: 1,
+  Remove: 0,
+} as const;
+
 type SortTypeName = typeof SortType[keyof typeof SortType];
 
 type CityNameType = typeof CityName[keyof typeof CityName];
 
-export {AppRoute, AuthorizationStatus, CityName, CITIES, SortType, ServerConfig};
-export type {CityNameType, SortTypeName};
+type FavoriteStatusValue = typeof FavoriteStatus[keyof typeof FavoriteStatus];
+
+export {AppRoute, AuthorizationStatus, CityName, CITIES, FavoriteStatus, SortType, ServerConfig};
+export type {CityNameType, FavoriteStatusValue, SortTypeName};

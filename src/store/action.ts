@@ -8,6 +8,10 @@ const changeCity = createAction<CityNameType>('city/changeCity');
 
 const fillOffers = createAction<Offer[]>('offers/fillOffers');
 
+const updateOffer = createAction<Offer>('offers/updateOffer');
+
+const fillFavoriteOffers = createAction<Offer[]>('favorites/fillFavoriteOffers');
+
 const setOffersLoadingStatus = createAction<boolean>('offers/setOffersLoadingStatus');
 
 const requireAuthorization = createAction<AuthorizationStatusType>('user/requireAuthorization');
@@ -22,11 +26,13 @@ const fillReviews = createAction<Review[]>('reviews/fillReviews');
 
 export {
   changeCity,
+  fillFavoriteOffers,
   fillNearbyOffers,
   fillOffers,
   fillReviews,
   requireAuthorization,
   setCurrentOffer,
   setOfferLoadingStatus,
-  setOffersLoadingStatus
+  setOffersLoadingStatus,
+  updateOffer
 };

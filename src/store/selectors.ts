@@ -13,6 +13,10 @@ function getOffers(state: State): Offer[] {
   return state.offers.offers;
 }
 
+function getFavoriteOffers(state: State): Offer[] {
+  return state.favorites.favoriteOffers;
+}
+
 const getFilteredOffers = createSelector(
   [getOffers, getCity],
   (offers, city) => offers.filter((offer) => offer.city.name === city)
@@ -46,6 +50,7 @@ export {
   getAuthorizationStatus,
   getCity,
   getCurrentOffer,
+  getFavoriteOffers,
   getFilteredOffers,
   getNearbyOffers,
   getOfferLoadingStatus,
