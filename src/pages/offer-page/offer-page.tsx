@@ -27,6 +27,7 @@ import type {Offer} from '../../types/offer';
 import Map from '../../components/map/map';
 
 const OFFER_IMAGES_COUNT = 6;
+const NEARBY_OFFERS_COUNT = 3;
 const RATING_PERCENT_MULTIPLIER = 20;
 
 function getRatingWidth(rating: number): string {
@@ -46,7 +47,6 @@ function OfferPage(): JSX.Element {
   const reviews = useAppSelector(getReviews);
   const isOfferLoading = useAppSelector(getOfferLoadingStatus);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
   const [isReviewSending, setIsReviewSending] = useState(false);
 
   useEffect(() => {
@@ -82,7 +82,8 @@ function OfferPage(): JSX.Element {
     description,
   } = currentOffer;
 
-  const offerMapOffers = [currentOffer, ...nearbyOffers];
+  const limitedNearbyOffers = nearbyOffers.slice(0, NEARBY_OFFERS_COUNT);
+  const offerMapOffers = [currentOffer, ...limitedNearbyOffers];
 
   const handleReviewSubmit = async (reviewData: ReviewData) => {
     if (!id) {
@@ -96,14 +97,6 @@ function OfferPage(): JSX.Element {
     } finally {
       setIsReviewSending(false);
     }
-  };
-
-  const handleOfferMouseEnter = (offerId: string) => {
-    setActiveOfferId(offerId);
-  };
-
-  const handleOfferMouseLeave = () => {
-    setActiveOfferId(null);
   };
 
   const handleFavoriteButtonClick = (offer: Offer) => {
@@ -219,7 +212,7 @@ function OfferPage(): JSX.Element {
           <Map
             city={currentOffer.city}
             offers={offerMapOffers}
-            selectedOfferId={activeOfferId ?? currentOffer.id}
+            selectedOfferId={currentOffer.id}
             className="offer__map map"
           />
         </section>
@@ -228,11 +221,9 @@ function OfferPage(): JSX.Element {
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <div className="near-places__list places__list">
               <OffersList
-                offers={nearbyOffers}
+                offers={limitedNearbyOffers}
                 cardClassName="near-places__card place-card"
                 onFavoriteButtonClick={handleFavoriteButtonClick}
-                onOfferMouseEnter={handleOfferMouseEnter}
-                onOfferMouseLeave={handleOfferMouseLeave}
               />
             </div>
           </section>
