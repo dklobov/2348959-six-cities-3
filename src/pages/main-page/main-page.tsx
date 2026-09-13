@@ -6,13 +6,12 @@ import OffersList from '../../components/offers-list/offers-list';
 import type {CityNameType, SortTypeName} from '../../const';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import Spinner from '../../components/spinner/spinner';
+import {useCallback, useMemo, useState} from 'react';
 import {getSortedOffers} from '../../utils/offer';
 import {changeCity} from '../../store/action';
 import Map from '../../components/map/map';
 import {cities} from '../../mocks/cities';
 import {Link} from 'react-router-dom';
-import {useState} from 'react';
-
 
 function MainPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -22,27 +21,33 @@ function MainPage(): JSX.Element {
   const filteredOffers = useAppSelector(getFilteredOffers);
   const isOffersLoading = useAppSelector(getOffersLoadingStatus);
 
-  const currentCityData = cities.find((city) => city.name === currentCity) ?? cities[0];
+  const currentCityData = useMemo(
+    () => cities.find((city) => city.name === currentCity) ?? cities[0],
+    [currentCity]
+  );
   const offersCount = filteredOffers.length;
-  const sortedOffers = getSortedOffers(filteredOffers, currentSortType);
+  const sortedOffers = useMemo(
+    () => getSortedOffers(filteredOffers, currentSortType),
+    [filteredOffers, currentSortType]
+  );
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
-  const handleCityChange = (city: CityNameType) => {
+  const handleCityChange = useCallback((city: CityNameType) => {
     dispatch(changeCity(city));
     setCurrentSortType(SortType.Popular);
-  };
+  }, [dispatch]);
 
-  const handleSortTypeChange = (sortType: SortTypeName) => {
+  const handleSortTypeChange = useCallback((sortType: SortTypeName) => {
     setCurrentSortType(sortType);
-  };
+  }, []);
 
-  const handleOfferMouseEnter = (offerId: string) => {
+  const handleOfferMouseEnter = useCallback((offerId: string) => {
     setActiveOfferId(offerId);
-  };
+  }, []);
 
-  const handleOfferMouseLeave = () => {
+  const handleOfferMouseLeave = useCallback(() => {
     setActiveOfferId(null);
-  };
+  }, []);
 
   return (
     <div className="page page--gray page--main">
