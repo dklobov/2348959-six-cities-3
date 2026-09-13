@@ -2,6 +2,7 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {appProcess} from './app-process';
 import {offerData} from './offer-data';
 import {offersData} from './offers-data';
+import {favoritesData} from './favorites-data';
 import {userProcess} from './user-process';
 import {ServerConfig} from '../const';
 import {createApi} from '../services/api';
@@ -10,6 +11,7 @@ const api = createApi(ServerConfig.Url, ServerConfig.Timeout);
 
 const reducer = combineReducers({
   app: appProcess,
+  favorites: favoritesData,
   offer: offerData,
   offers: offersData,
   user: userProcess,
