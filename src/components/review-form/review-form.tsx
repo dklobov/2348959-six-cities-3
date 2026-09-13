@@ -1,4 +1,5 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
+import type {ReviewData} from '../../types/review';
 
 const MIN_REVIEW_LENGTH = 50;
 const MAX_REVIEW_LENGTH = 300;
@@ -16,7 +17,11 @@ type ReviewFormState = {
   comment: string;
 };
 
-function ReviewForm(): JSX.Element {
+type ReviewFormProps = {
+  onReviewSubmit: (reviewData: ReviewData) => void;
+};
+
+function ReviewForm({onReviewSubmit}: ReviewFormProps): JSX.Element {
   const [reviewForm, setReviewForm] = useState<ReviewFormState>({
     rating: 0,
     comment: '',
@@ -38,6 +43,16 @@ function ReviewForm(): JSX.Element {
 
   const handleFormSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    onReviewSubmit({
+      rating: reviewForm.rating,
+      comment: reviewForm.comment,
+    });
+
+    setReviewForm({
+      rating: 0,
+      comment: '',
+    });
   };
 
   const isSubmitDisabled =
