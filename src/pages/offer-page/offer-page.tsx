@@ -11,17 +11,19 @@ import {
   getOfferLoadingStatus,
   getReviews
 } from '../../store/selectors';
+import {useEffect, useState} from 'react';
 import ReviewsList from '../../components/reviews-list/reviews-list';
+import {changeFavoriteStatusAction} from '../../store/api-actions';
 import OffersList from '../../components/offers-list/offers-list';
 import ReviewForm from '../../components/review-form/review-form';
-import {useEffect, useState} from 'react';
 import NotFoundPage from '../not-found-page/not-found-page';
 import {useAppDispatch, useAppSelector} from '../../hooks';
+import {AppRoute, AuthorizationStatus} from '../../const';
+import {useNavigate, useParams} from 'react-router-dom';
 import Spinner from '../../components/spinner/spinner';
+import Header from '../../components/header/header';
 import type {ReviewData} from '../../types/review';
-import {AuthorizationStatus} from '../../const';
 import type {Offer} from '../../types/offer';
-import {useParams} from 'react-router-dom';
 import Map from '../../components/map/map';
 
 const OFFER_IMAGES_COUNT = 6;
@@ -38,6 +40,7 @@ function getFormattedOfferType(type: Offer['type']): string {
 function OfferPage(): JSX.Element {
   const {id} = useParams();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const currentOffer = useAppSelector(getCurrentOffer);
   const nearbyOffers = useAppSelector(getNearbyOffers);
   const reviews = useAppSelector(getReviews);
@@ -96,36 +99,18 @@ function OfferPage(): JSX.Element {
     setActiveOfferId(null);
   };
 
+  const handleFavoriteButtonClick = (offer: Offer) => {
+    if (authorizationStatus !== AuthorizationStatus.Auth) {
+      navigate(AppRoute.Login);
+      return;
+    }
+
+    dispatch(changeFavoriteStatusAction(offer.id, offer.isFavorite));
+  };
+
   return (
     <div className="page">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <a className="header__logo-link" href="/">
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41" />
-              </a>
-            </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a className="header__nav-link header__nav-link--profile" href="#">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    <span className="header__user-name user__name">Oliver.conner@gmail.com</span>
-                    <span className="header__favorite-count">3</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="page__main page__main--offer">
         <section className="offer">
@@ -152,6 +137,7 @@ function OfferPage(): JSX.Element {
                 <button
                   className={`offer__bookmark-button ${isFavorite ? 'offer__bookmark-button--active' : ''} button`}
                   type="button"
+                  onClick={() => handleFavoriteButtonClick(currentOffer)}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
@@ -234,6 +220,7 @@ function OfferPage(): JSX.Element {
               <OffersList
                 offers={nearbyOffers}
                 cardClassName="near-places__card place-card"
+                onFavoriteButtonClick={handleFavoriteButtonClick}
                 onOfferMouseEnter={handleOfferMouseEnter}
                 onOfferMouseLeave={handleOfferMouseLeave}
               />
