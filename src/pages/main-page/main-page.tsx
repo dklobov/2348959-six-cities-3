@@ -4,11 +4,10 @@ import {AppRoute, AuthorizationStatus, CITIES, SortType} from '../../const';
 import CitiesList from '../../components/cities-list/cities-list';
 import OffersList from '../../components/offers-list/offers-list';
 import type {CityNameType, SortTypeName} from '../../const';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import Spinner from '../../components/spinner/spinner';
-import {useDispatch, useSelector} from 'react-redux';
 import {getSortedOffers} from '../../utils/offer';
 import {changeCity} from '../../store/action';
-import { useAppSelector } from '../../hooks';
 import Map from '../../components/map/map';
 import {cities} from '../../mocks/cities';
 import {Link} from 'react-router-dom';
@@ -16,12 +15,12 @@ import {useState} from 'react';
 
 
 function MainPage(): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [currentSortType, setCurrentSortType] = useState<SortTypeName>(SortType.Popular);
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
-  const currentCity = useSelector(getCity);
-  const filteredOffers = useSelector(getFilteredOffers);
-  const isOffersLoading = useSelector(getOffersLoadingStatus);
+  const currentCity = useAppSelector(getCity);
+  const filteredOffers = useAppSelector(getFilteredOffers);
+  const isOffersLoading = useAppSelector(getOffersLoadingStatus);
 
   const currentCityData = cities.find((city) => city.name === currentCity) ?? cities[0];
   const offersCount = filteredOffers.length;
