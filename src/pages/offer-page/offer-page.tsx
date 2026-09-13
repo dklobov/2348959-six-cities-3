@@ -1,16 +1,30 @@
+import {
+  fetchNearbyOffersAction,
+  fetchOfferAction,
+  fetchReviewsAction,
+  postReviewAction
+} from '../../store/api-actions';
+import {
+  getAuthorizationStatus,
+  getCurrentOffer,
+  getNearbyOffers,
+  getOfferLoadingStatus,
+  getReviews
+} from '../../store/selectors';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OffersList from '../../components/offers-list/offers-list';
 import ReviewForm from '../../components/review-form/review-form';
 import NotFoundPage from '../not-found-page/not-found-page';
-import {getOffers} from '../../store/selectors';
-import {reviews} from '../../mocks/reviews';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import Spinner from '../../components/spinner/spinner';
+import type {ReviewData} from '../../types/review';
+import {AuthorizationStatus} from '../../const';
+import type {Offer} from '../../types/offer';
 import {useParams} from 'react-router-dom';
 import Map from '../../components/map/map';
-import {Offer} from '../../types/offer';
-import {useSelector} from 'react-redux';
+import {useEffect, useState} from 'react';
 
 const OFFER_IMAGES_COUNT = 6;
-const NEARBY_OFFERS_COUNT = 3;
 const RATING_PERCENT_MULTIPLIER = 20;
 
 function getRatingWidth(rating: number): string {
@@ -23,8 +37,27 @@ function getFormattedOfferType(type: Offer['type']): string {
 
 function OfferPage(): JSX.Element {
   const {id} = useParams();
-  const offers = useSelector(getOffers);
-  const currentOffer = offers.find((offer) => offer.id === id);
+  const dispatch = useAppDispatch();
+  const currentOffer = useAppSelector(getCurrentOffer);
+  const nearbyOffers = useAppSelector(getNearbyOffers);
+  const reviews = useAppSelector(getReviews);
+  const isOfferLoading = useAppSelector(getOfferLoadingStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    dispatch(fetchOfferAction(id));
+    dispatch(fetchNearbyOffersAction(id));
+    dispatch(fetchReviewsAction(id));
+  }, [dispatch, id]);
+
+  if (isOfferLoading) {
+    return <Spinner />;
+  }
 
   if (!currentOffer) {
     return <NotFoundPage />;
@@ -32,22 +65,36 @@ function OfferPage(): JSX.Element {
 
   const {
     title,
-    type,
-    price,
-    rating,
     images,
+    isPremium,
+    isFavorite,
+    rating,
+    type,
     bedrooms,
     maxAdults,
+    price,
     goods,
     host,
     description,
-    isFavorite,
-    isPremium,
   } = currentOffer;
 
-  const nearbyOffers = offers
-    .filter((offer) => offer.id !== currentOffer.id)
-    .slice(0, NEARBY_OFFERS_COUNT);
+  const offerMapOffers = [currentOffer, ...nearbyOffers];
+
+  const handleReviewSubmit = (reviewData: ReviewData) => {
+    if (!id) {
+      return;
+    }
+
+    dispatch(postReviewAction(id, reviewData));
+  };
+
+  const handleOfferMouseEnter = (offerId: string) => {
+    setActiveOfferId(offerId);
+  };
+
+  const handleOfferMouseLeave = () => {
+    setActiveOfferId(null);
+  };
 
   return (
     <div className="page">
@@ -167,13 +214,16 @@ function OfferPage(): JSX.Element {
               </div>
               <section className="offer__reviews reviews">
                 <ReviewsList reviews={reviews} />
-                <ReviewForm />
+                {authorizationStatus === AuthorizationStatus.Auth && (
+                  <ReviewForm onReviewSubmit={handleReviewSubmit} />
+                )}
               </section>
             </div>
           </div>
           <Map
             city={currentOffer.city}
-            offers={nearbyOffers}
+            offers={offerMapOffers}
+            selectedOfferId={activeOfferId ?? currentOffer.id}
             className="offer__map map"
           />
         </section>
@@ -184,6 +234,8 @@ function OfferPage(): JSX.Element {
               <OffersList
                 offers={nearbyOffers}
                 cardClassName="near-places__card place-card"
+                onOfferMouseEnter={handleOfferMouseEnter}
+                onOfferMouseLeave={handleOfferMouseLeave}
               />
             </div>
           </section>
