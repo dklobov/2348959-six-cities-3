@@ -2,6 +2,7 @@ import {memo} from 'react';
 import {getOfferRoute} from '../../utils/route';
 import type {Offer} from '../../types/offer';
 import {Link} from 'react-router-dom';
+import {MouseEvent} from 'react';
 
 const DEFAULT_CARD_CLASS_NAME = 'cities__card place-card';
 const RATING_PERCENT_MULTIPLIER = 20;
@@ -9,6 +10,7 @@ const RATING_PERCENT_MULTIPLIER = 20;
 type OfferCardProps = {
   offer: Offer;
   className?: string;
+  onFavoriteButtonClick?: (offer: Offer) => void;
   onOfferMouseEnter?: (offerId: string) => void;
   onOfferMouseLeave?: () => void;
 };
@@ -24,6 +26,7 @@ function getFormattedOfferType(type: Offer['type']): string {
 function OfferCard({
   offer,
   className = DEFAULT_CARD_CLASS_NAME,
+  onFavoriteButtonClick,
   onOfferMouseEnter,
   onOfferMouseLeave,
 }: OfferCardProps): JSX.Element {
@@ -44,6 +47,11 @@ function OfferCard({
 
   const handleCardMouseLeave = () => {
     onOfferMouseLeave?.();
+  };
+
+  const handleFavoriteButtonClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    onFavoriteButtonClick?.(offer);
   };
 
   return (
@@ -73,6 +81,7 @@ function OfferCard({
           <button
             className={`place-card__bookmark-button ${isFavorite ? 'place-card__bookmark-button--active' : ''} button`}
             type="button"
+            onClick={handleFavoriteButtonClick}
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
