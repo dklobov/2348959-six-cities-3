@@ -1,4 +1,4 @@
-import {MouseEvent} from 'react';
+import {memo, MouseEvent} from 'react';
 import type {CityNameType} from '../../const';
 
 type CitiesListProps = {
@@ -36,4 +36,6 @@ function CitiesList({cities, currentCity, onCityChange}: CitiesListProps): JSX.E
   );
 }
 
-export default CitiesList;
+const MemoizedCitiesList = memo(CitiesList);
+
+export default MemoizedCitiesList;

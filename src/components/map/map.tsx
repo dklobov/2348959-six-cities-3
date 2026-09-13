@@ -1,7 +1,7 @@
-import {useEffect, useRef} from 'react';
+import {memo, useEffect, useRef} from 'react';
 import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {Offer} from '../../types/offer';
+import type {Offer} from '../../types/offer';
 
 const TILE_LAYER =
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -97,4 +97,6 @@ function Map({
   );
 }
 
-export default Map;
+const MemoizedMap = memo(Map);
+
+export default MemoizedMap;

@@ -14,6 +14,7 @@ import {
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import OffersList from '../../components/offers-list/offers-list';
 import ReviewForm from '../../components/review-form/review-form';
+import {useEffect, useState} from 'react';
 import NotFoundPage from '../not-found-page/not-found-page';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import Spinner from '../../components/spinner/spinner';
@@ -22,7 +23,6 @@ import {AuthorizationStatus} from '../../const';
 import type {Offer} from '../../types/offer';
 import {useParams} from 'react-router-dom';
 import Map from '../../components/map/map';
-import {useEffect, useState} from 'react';
 
 const OFFER_IMAGES_COUNT = 6;
 const RATING_PERCENT_MULTIPLIER = 20;
