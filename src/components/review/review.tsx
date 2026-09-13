@@ -19,8 +19,7 @@ function getFormattedReviewDate(date: string): string {
 
 function Review({review}: ReviewProps): JSX.Element {
   const {
-    userName,
-    avatarUrl,
+    user,
     rating,
     comment,
     date,
@@ -30,10 +29,10 @@ function Review({review}: ReviewProps): JSX.Element {
     <li className="reviews__item">
       <div className="reviews__user user">
         <div className="reviews__avatar-wrapper user__avatar-wrapper">
-          <img className="reviews__avatar user__avatar" src={avatarUrl} width="54" height="54" alt="Reviews avatar" />
+          <img className="reviews__avatar user__avatar" src={user.avatarUrl} width="54" height="54" alt="Reviews avatar" />
         </div>
         <span className="reviews__user-name">
-          {userName}
+          {user.name}
         </span>
       </div>
       <div className="reviews__info">

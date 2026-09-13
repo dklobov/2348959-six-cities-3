@@ -1,5 +1,6 @@
 import type {AuthorizationStatusType} from '../types/authorization-status';
 import {createAction} from '@reduxjs/toolkit';
+import type {Review} from '../types/review';
 import type {CityNameType} from '../const';
 import type {Offer} from '../types/offer';
 
@@ -11,4 +12,21 @@ const setOffersLoadingStatus = createAction<boolean>('offers/setOffersLoadingSta
 
 const requireAuthorization = createAction<AuthorizationStatusType>('user/requireAuthorization');
 
-export {changeCity, fillOffers, requireAuthorization, setOffersLoadingStatus};
+const setOfferLoadingStatus = createAction<boolean>('offer/setOfferLoadingStatus');
+
+const setCurrentOffer = createAction<Offer | null>('offer/setCurrentOffer');
+
+const fillNearbyOffers = createAction<Offer[]>('offer/fillNearbyOffers');
+
+const fillReviews = createAction<Review[]>('reviews/fillReviews');
+
+export {
+  changeCity,
+  fillNearbyOffers,
+  fillOffers,
+  fillReviews,
+  requireAuthorization,
+  setCurrentOffer,
+  setOfferLoadingStatus,
+  setOffersLoadingStatus
+};

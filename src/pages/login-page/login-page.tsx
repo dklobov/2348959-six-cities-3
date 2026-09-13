@@ -11,9 +11,9 @@ function LoginPage(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
