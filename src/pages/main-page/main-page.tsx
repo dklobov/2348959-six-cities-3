@@ -15,7 +15,6 @@ import {changeCity} from '../../store/action';
 import type {Offer} from '../../types/offer';
 import {useNavigate} from 'react-router-dom';
 import Map from '../../components/map/map';
-import {cities} from '../../mocks/cities';
 
 function MainPage(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -29,15 +28,12 @@ function MainPage(): JSX.Element {
   const isOffersLoading = useAppSelector(getOffersLoadingStatus);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
-  const currentCityData = useMemo(
-    () => cities.find((city) => city.name === currentCity) ?? cities[0],
-    [currentCity]
-  );
   const offersCount = filteredOffers.length;
   const sortedOffers = useMemo(
     () => getSortedOffers(filteredOffers, currentSortType),
     [filteredOffers, currentSortType]
   );
+  const currentCityData = sortedOffers[0]?.city;
 
   const isEmpty = !isOffersLoading && offersCount === 0;
   const mainClassName = isEmpty
@@ -107,7 +103,7 @@ function MainPage(): JSX.Element {
                 </div>
               </section>
               <div className="cities__right-section">
-                {!isOffersLoading && (
+                {!isOffersLoading && currentCityData && (
                   <Map
                     city={currentCityData}
                     offers={sortedOffers}
