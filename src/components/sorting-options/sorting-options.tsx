@@ -1,4 +1,4 @@
-import {KeyboardEvent, MouseEvent, useState} from 'react';
+import {KeyboardEvent, memo, MouseEvent, useState} from 'react';
 import {SortType} from '../../const';
 import type {SortTypeName} from '../../const';
 
@@ -74,4 +74,6 @@ function SortingOptions({currentSortType, onSortTypeChange}: SortingOptionsProps
   );
 }
 
-export default SortingOptions;
+const MemoizedSortingOptions = memo(SortingOptions);
+
+export default MemoizedSortingOptions;
