@@ -1,27 +1,37 @@
 import {
+  fillFavoriteOffers,
   fillOffers,
   setOffersLoadingStatus,
   requireAuthorization,
   fillNearbyOffers,
   fillReviews,
   setCurrentOffer,
-  setOfferLoadingStatus} from './action';
+  setOfferLoadingStatus,
+  updateOffer
+} from './action';
 import type {Review, ReviewData} from '../types/review';
 import {AxiosInstance} from 'axios';
 import {AppDispatch, State} from './index';
 import {adaptOfferToClient} from '../utils/adapter';
 import type {ServerOffer} from '../types/offer';
-import {AuthorizationStatus} from '../const';
+import {AuthorizationStatus, FavoriteStatus} from '../const';
+import type {FavoriteStatusValue} from '../const';
 import {saveToken} from '../services/token';
 import type {AuthData} from '../types/auth-data';
 import type {UserData} from '../types/user-data';
 
 const OFFERS_ROUTE = '/offers';
 
+const FAVORITES_ROUTE = '/favorite';
+
 const LOGIN_ROUTE = '/login';
 
 function getOfferRoute(offerId: string): string {
   return `/offers/${offerId}`;
+}
+
+function getFavoriteStatusRoute(offerId: string, status: FavoriteStatusValue): string {
+  return `/favorite/${offerId}/${status}`;
 }
 
 function getNearbyOffersRoute(offerId: string): string {
@@ -97,6 +107,33 @@ function postReviewAction(offerId: string, reviewData: ReviewData) {
   };
 }
 
+function fetchFavoriteOffersAction() {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    const {data} = await api.get<ServerOffer[]>(FAVORITES_ROUTE);
+    const favoriteOffers = data.map(adaptOfferToClient);
+
+    dispatch(fillFavoriteOffers(favoriteOffers));
+  };
+}
+
+function changeFavoriteStatusAction(offerId: string, isFavorite: boolean) {
+  return async (
+    dispatch: AppDispatch,
+    _getState: () => State,
+    api: AxiosInstance
+  ): Promise<void> => {
+    const status = isFavorite ? FavoriteStatus.Remove : FavoriteStatus.Add;
+    const {data} = await api.post<ServerOffer>(getFavoriteStatusRoute(offerId, status));
+    const updatedOffer = adaptOfferToClient(data);
+
+    dispatch(updateOffer(updatedOffer));
+  };
+}
+
 function fetchOffersAction() {
   return async (
     dispatch: AppDispatch,
@@ -125,8 +162,10 @@ function checkAuthAction() {
     try {
       await api.get(LOGIN_ROUTE);
       dispatch(requireAuthorization(AuthorizationStatus.Auth));
+      dispatch(fetchFavoriteOffersAction());
     } catch {
       dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
+      dispatch(fillFavoriteOffers([]));
     }
   };
 }
@@ -141,11 +180,14 @@ function loginAction(authData: AuthData) {
 
     saveToken(data.token);
     dispatch(requireAuthorization(AuthorizationStatus.Auth));
+    dispatch(fetchFavoriteOffersAction());
   };
 }
 
 export {
+  changeFavoriteStatusAction,
   checkAuthAction,
+  fetchFavoriteOffersAction,
   fetchNearbyOffersAction,
   fetchOfferAction,
   fetchOffersAction,
