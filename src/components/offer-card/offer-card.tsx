@@ -1,3 +1,4 @@
+import {memo} from 'react';
 import {getOfferRoute} from '../../utils/route';
 import type {Offer} from '../../types/offer';
 import {Link} from 'react-router-dom';
@@ -97,4 +98,6 @@ function OfferCard({
   );
 }
 
-export default OfferCard;
+const MemoizedOfferCard = memo(OfferCard);
+
+export default MemoizedOfferCard;
